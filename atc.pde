@@ -17,18 +17,15 @@ long timer = 0;
 // motor 2 for train control at 2kHz. 2kHz happens to make the trains whine less.
 AF_DCMotor motor(2, MOTOR12_2KHZ);
 
-// left and right turnouts on motors 3 and 4
+// left-turn and right-turn turnouts on motors 3 and 4
 Turnout leftTurnout(3);
+Turnout rightTurnout(4);
 
 long counter = 0;
 boolean running = false;
 
 void setup() {
   Serial.begin(9600);
-  Serial.println("hi mom");
-  leftTurnout.setTurned();
-  leftTurnout.setStraight();
-  Serial.println("hi mom 2");
 }
 
 
@@ -36,22 +33,21 @@ void setup() {
 void checkThrottle() {
   if(Serial.available()) {
   
+      // read 2 characters from serial
       Serial.println("Available: " + (String)Serial.available());
       input[0] = Serial.read();
       input[1] = Serial.read();
       Serial.flush();
       
-      Serial.println("First input was " + (String)(input[0]));
-      Serial.println("Second input was " + (String)(input[1]));
-      Serial.println("Third input was " + (String)(input[2]));
+      Serial.println("Input was: " + (String)(input[0]) + (String)(input[1]));
       
       targetSpeed = atoi(input);
       
       if(targetSpeed > 99)
         targetSpeed = 99;
         
-      /*if(targetSpeed < 10)
-        targetSpeed = 0;*/
+      if(targetSpeed < 10)
+        targetSpeed = 0;
 
       Serial.println("Target speed set to " + (String)targetSpeed);
     }
@@ -94,8 +90,7 @@ void loop() {
   setNextSpeed();
   
   changeSpeed();
-    
-  //Serial.println(String(millis()) + ": Speed checked.");
+
   timer = millis();
   }
 }
