@@ -1,0 +1,14 @@
+Arduino Train Control's goal is to become an ideal alternative to DCC train control for those who desire cost savings or finer control over their electric trains.
+
+ATC uses the Adafruit Motor Shield, which feeds external power through H-bridges. That library is available at https://github.com/adafruit/Adafruit-Motor-Shield-library.git
+
+The H-bridges are given a high-frequency pulse width-modulated signal, allowing virtual voltage for train speed control. The motor shield can power standard electric turnouts as well as electric trains.
+
+Unlike many Arduino projects, ATC will be built with object-oriented programming, ensuring that the code can be reused easily.
+
+There isn't any real documentation yet, and there probably won't be any for a while.
+
+
+Arduino Train Control is copyright (c) Eli Spiro 2011, and made available under the GNU General Public License v3.
+
+Thanks to aspro648 at Instructables for the inspiration.
