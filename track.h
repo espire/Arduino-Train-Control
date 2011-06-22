@@ -7,9 +7,19 @@
 
 class Track : public AF_DCMotor {
 	public:
-		Track(uint8_t, uint8_t freq = MOTOR34_8KHZ);
+		Track(int8_t, float acceleration = 1, float drag = 1, int8_t freq = MOTOR12_2KHZ);
+		int setThrottle(int);
+		float setNextSpeed();
+		int changeSpeed();
 	private:
-		uint8_t _motorNum;
+		int8_t motorNum;
+		
+		float acceleration;
+		float drag;
+		
+		int targetSpeed; // how fast would we like to go?
+		float nextSpeed; // how fast will we set the motor next?
+		int motorSpeed; // how fast is the motor going at this moment?
 };
 
 #endif

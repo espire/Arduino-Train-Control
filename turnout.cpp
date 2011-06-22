@@ -1,9 +1,7 @@
-#include <stdlib.h>
-#include <AFMotor.h>
-#include <WProgram.h>
 #include "turnout.h"
 
 Turnout::Turnout(uint8_t motorNum) : AF_DCMotor(motorNum) {
+  _motorNum = motorNum;
   setSpeed(255);
 }
 

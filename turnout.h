@@ -20,8 +20,6 @@ class Turnout : public AF_DCMotor {
   private:
     uint8_t _motorNum;
     SwitchState state;
-    
-    //AF_DCMotor * _motor;
 };
 
 #endif
