@@ -6,8 +6,9 @@
 #include <stdlib.h>
 
 enum SwitchState {
-  STRAIGHT,
-  TURNED
+	STRAIGHT,
+	TURNED,
+	UNKNOWN
 };
 
 class Turnout : public AF_DCMotor {
@@ -18,7 +19,7 @@ class Turnout : public AF_DCMotor {
     SwitchState throwSwitch();
     SwitchState getState();
   private:
-    uint8_t _motorNum;
+    uint8_t motorNum;
     SwitchState state;
 };
 
