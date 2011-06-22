@@ -5,12 +5,11 @@
 
 char * input = "00";
 
-
 // milliseconds since last time we acted on the motor's speed
 long timer = 0;
 
 // motor 2 for train control at 2kHz. 2kHz happens to make the trains whine less.
-Track track(2, 1, 1, MOTOR12_2KHZ);
+Track track(2);
 
 // left-turn and right-turn turnouts on motors 3 and 4
 Turnout leftTurnout(3);
@@ -19,7 +18,6 @@ Turnout rightTurnout(4);
 void setup() {
   Serial.begin(9600);
 }
-
 
 void loop() {
   if(millis() > timer + 50) {

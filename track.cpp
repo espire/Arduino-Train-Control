@@ -1,9 +1,10 @@
 #include "track.h"
 
-Track::Track(int8_t motorNum, float acceleration, float drag, int8_t freq) : AF_DCMotor(motorNum, freq) {
+Track::Track(int8_t motorNum, float acceleration, float drag, int speedLimit, int8_t freq) : AF_DCMotor(motorNum, freq) {
 	this->motorNum = motorNum;
 	this->acceleration = acceleration;
 	this->drag = drag;
+	this->speedLimit = speedLimit;
 	targetSpeed = 0;
 	nextSpeed = 0;
 	motorSpeed = 0;
@@ -12,8 +13,8 @@ Track::Track(int8_t motorNum, float acceleration, float drag, int8_t freq) : AF_
 }
 
 int Track::setThrottle(int throttle) {
-	if(throttle > 99) {
-		throttle = 99;
+	if(throttle > speedLimit) {
+		throttle = speedLimit;
 	}
 	// don't give the train so little power as to idle it
 	else if(throttle < 10) {
