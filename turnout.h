@@ -12,15 +12,15 @@ enum SwitchState {
 };
 
 class Turnout : public AF_DCMotor {
-  public:
-    Turnout(uint8_t);
-    void setStraight();
-    void setTurned();
-    SwitchState throwSwitch();
-    SwitchState getState();
-  private:
-    uint8_t motorNum;
-    SwitchState state;
+	public:
+		Turnout(uint8_t);
+		void setStraight();
+		void setTurned();
+		SwitchState throwSwitch();
+		SwitchState getState();
+	private:
+		uint8_t motorNum;
+		SwitchState state;
 };
 
 #endif

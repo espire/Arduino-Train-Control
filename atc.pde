@@ -16,7 +16,7 @@ Turnout leftTurnout(3);
 Turnout rightTurnout(4);
 
 void setup() {
-  Serial.begin(9600);
+	Serial.begin(9600);
 }
 
 void loop() {
