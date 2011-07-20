@@ -7,21 +7,28 @@
 
 class Track : public AF_DCMotor {
 	public:
-		Track(int8_t, float acceleration = 1, float drag = 1, int speedLimit = 99, int8_t freq = MOTOR12_2KHZ);
-		int setThrottle(int);
-		float setNextSpeed();
-		int changeSpeed();
+		Track(int8_t, float acceleration = 1, float braking = 1, int speedLimit = 99, int8_t freq = MOTOR12_2KHZ);
+		int setThrottle(int); // tell the track how fast we want to go
+		float setNextSpeed(); // tell the track to calculate the next speed increment
+		void emergencyBrake(); // emergency! all stop!
+		void disableEmergency(); // all clear!
+		float changeSpeed(); // tell the track to change its motor's speed to the set increment
+		
 	private:
 		int8_t motorNum;
 		
 		float acceleration;
-		float drag;
+		float braking;
 		
 		int speedLimit;
 		
+		// all speeds can be negative, indicating travel in reverse
 		int targetSpeed; // how fast would we like to go?
 		float nextSpeed; // how fast will we set the motor next?
-		int motorSpeed; // how fast is the motor going at this moment?
+		uint8_t nextDirection; // in what direction will the motor next?
+		float motorSpeed; // how fast is the motor going at this moment?
+		
+		bool emergency; // if emergency braking is on
 };
 
 #endif

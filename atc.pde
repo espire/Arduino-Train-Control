@@ -3,13 +3,13 @@
 #include "track.h"
 #include "turnout.h"
 
-char * input = "00";
+char * input = "000";
 
 // milliseconds since last time we acted on the motor's speed
 long timer = 0;
 
 // motor 2 for train control at 2kHz. 2kHz happens to make the trains whine less.
-Track track(2);
+Track track(2,0.6,1);
 
 // left-turn and right-turn turnouts on motors 3 and 4
 Turnout leftTurnout(3);
@@ -26,10 +26,19 @@ void loop() {
 		Serial.println("Available: " + (String)Serial.available());
 		input[0] = Serial.read();
 		input[1] = Serial.read();
+		input[2] = Serial.read();
 		Serial.flush();
-		Serial.println("Input was: " + (String)(input[0]) + (String)(input[1]));
+		Serial.println("Input was: " + (String)(input[0]) + (String)(input[1]) + (String)(input[2]));
 		
-		track.setThrottle(atoi(input));
+		if(input[0] == 'e') {
+			track.emergencyBrake();
+		}
+		else if(input[0] == 'c') {
+			track.disableEmergency();
+		}
+		else {
+			track.setThrottle(atoi(input));
+		}
 	}
 	
 	track.setNextSpeed();

@@ -1,13 +1,16 @@
 #include "track.h"
+#include <AFMotor.h>
 
-Track::Track(int8_t motorNum, float acceleration, float drag, int speedLimit, int8_t freq) : AF_DCMotor(motorNum, freq) {
+Track::Track(int8_t motorNum, float acceleration, float braking, int speedLimit, int8_t freq) : AF_DCMotor(motorNum, freq) {
 	this->motorNum = motorNum;
 	this->acceleration = acceleration;
-	this->drag = drag;
+	this->braking = braking;
 	this->speedLimit = speedLimit;
 	targetSpeed = 0;
 	nextSpeed = 0;
 	motorSpeed = 0;
+	nextDirection = FORWARD;
+	emergency = false;
 	
 	Serial.begin(9600);
 }
@@ -16,45 +19,92 @@ int Track::setThrottle(int throttle) {
 	if(throttle > speedLimit) {
 		throttle = speedLimit;
 	}
-	// don't give the train so little power as to idle it
-	else if(throttle < 10) {
+	else if(throttle < (speedLimit * -1)) {
+		throttle = speedLimit * -1;
+	}
+	else if(throttle < 10 && throttle > -10) {
+		// don't give the train so little power as to idle it
 		throttle = 0;
 	}
 	
 	targetSpeed = throttle;
-	
 	Serial.println("Throttle set to " + (String)targetSpeed);
-	
 	return throttle;
 }
 
 float Track::setNextSpeed() {
-	if(targetSpeed == 0) {
-	    nextSpeed = 0;
-	  }
-	  else if(targetSpeed > motorSpeed) {
-	    nextSpeed = (float)motorSpeed + acceleration;
-	    Serial.println("Accelerating... next speed set to " + (String)(int)nextSpeed + " rounded");
-	  }
-	  else if(targetSpeed < motorSpeed) {
-	    nextSpeed = (float)motorSpeed - drag;
-	    Serial.println("Coasting... next speed set to " + (String)(int)nextSpeed + " rounded");
-	  }
-	  else {
-	    // targetSpeed == motorSpeed, all is well
-	  }
+	
+	// emergency braking is on: don't run the engine
+	if(emergency) {
+		nextSpeed = 0;
+		Serial.println("Emergency! next speed set to 0");
+	}
+	
+	// special case: we are going directly between forward and reverse
+	// skip over not giving the train much power: about -30 to 30
+	else if((targetSpeed >= 20) && (motorSpeed > -20 && motorSpeed < 20)) {
+		nextSpeed = 20;
+		Serial.println("Switching into forward gear...next speed set to " + (String)(int)nextSpeed);
+	}
+	else if((targetSpeed <= -20) && (motorSpeed > -20 && motorSpeed < 20)) {
+		nextSpeed = -20;
+		Serial.println("Switching into reverse gear... next speed set to " + (String)(int)nextSpeed);
+	}
+	
+	// normal cases
+	else if((targetSpeed > motorSpeed) && (motorSpeed >= 0)) {
+		if(abs(targetSpeed - motorSpeed) < acceleration)
+			nextSpeed = targetSpeed;
+		else nextSpeed = motorSpeed + acceleration;
+		nextDirection = FORWARD;
+		Serial.println("Accelerating... next speed set to " + (String)(int)nextSpeed);
+	}
+	else if((targetSpeed < motorSpeed) && (motorSpeed > 0)) {
+		nextSpeed = motorSpeed - braking;
+		nextDirection = FORWARD;
+		Serial.println("Braking... next speed set to " + (String)(int)nextSpeed);
+	}
+	else if((targetSpeed < motorSpeed) && (motorSpeed <= 0)) {
+		if(abs(targetSpeed - motorSpeed) < acceleration)
+			nextSpeed = targetSpeed;
+		else nextSpeed = motorSpeed - acceleration;
+		nextDirection = BACKWARD;
+		Serial.println("Accelerating... next speed set to " + (String)(int)nextSpeed);
+	}
+	else if((targetSpeed > motorSpeed) && (motorSpeed < 0)) {
+		nextSpeed = motorSpeed + braking;
+		nextDirection = BACKWARD;
+		Serial.println("Braking... next speed set to " + (String)(int)nextSpeed);
+	}
+	else {
+		// targetSpeed == motorSpeed, all is well
+	}
 	
 	return nextSpeed;
 }
 
-int Track::changeSpeed() {
-  motorSpeed = (int)nextSpeed;
-  if(nextSpeed > 0) {
-    setSpeed(nextSpeed);
-    run(FORWARD);
-  }
-  else {
-    setSpeed(0);
-    run(RELEASE);
-  }
+void Track::emergencyBrake() {
+	emergency = true;
+	nextSpeed = 0;
+	Serial.println("Emergency! E-brake enabling.");
+}
+
+void Track::disableEmergency() {
+	emergency = false;
+	Serial.println("Emergency over. E-brake disabled.");
+}
+
+float Track::changeSpeed() {
+	motorSpeed = nextSpeed;
+	if(nextSpeed != 0) {
+		// the motor must be given a non-negative value 
+		setSpeed((int)abs(nextSpeed));
+		run(nextDirection);
+	}
+	else {
+		setSpeed(0);
+		run(RELEASE);
+	}
+	
+	return motorSpeed;
 }
