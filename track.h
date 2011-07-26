@@ -7,7 +7,7 @@
 
 class Track : public AF_DCMotor {
 	public:
-		Track(int8_t, float acceleration = 1, float braking = 1, int speedLimit = 99, int8_t freq = MOTOR12_2KHZ);
+		Track(int8_t, float acceleration = 1, float braking = 1, int speedLimit = 120, int8_t freq = MOTOR12_2KHZ);
 		int setThrottle(int); // tell the track how fast we want to go
 		float setNextSpeed(); // tell the track to calculate the next speed increment
 		void emergencyBrake(); // emergency! all stop!
