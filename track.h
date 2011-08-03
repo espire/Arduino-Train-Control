@@ -14,9 +14,6 @@ class Track : public AF_DCMotor {
 		void disableEmergency(); // all clear!
 		float changeSpeed(); // tell the track to change its motor's speed to the set increment
 		
-		float setAcceleration(float);
-		float setBraking(float);
-		
 	private:
 		int8_t motorNum;
 		
