@@ -112,3 +112,13 @@ float Track::changeSpeed() {
 	
 	return motorSpeed;
 }
+
+float Track::setAcceleration(float acceleration) {
+	this->acceleration = acceleration;
+	return acceleration;
+}
+
+float Track::setBraking(float braking) {
+	this->braking = braking;
+	return braking;
+}
