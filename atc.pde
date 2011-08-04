@@ -8,7 +8,7 @@ char input[7] = {'\0'};
 // the first character from input, used to specify what the command is
 char command = ' ';
 // the parameter associated with the command
-int value = 0;
+float value = 0;
 
 // milliseconds since the last time we acted on the motor's speed
 long timer = 0;
@@ -44,7 +44,7 @@ void loop() {
 			input[i] = input[i+2];
 		}
 		
-		value = atoi(input);
+		value = atof(input);
 		
 		switch(command) {
 			case 't':

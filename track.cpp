@@ -34,21 +34,24 @@ int Track::setThrottle(int throttle) {
 
 float Track::setNextSpeed() {
 	
+	char * out;
+	bool printSpeed = true;
+	
 	// emergency braking is on: don't run the engine
 	if(emergency) {
 		nextSpeed = 0;
-		Serial.println("Emergency! next speed set to 0");
+		Serial.print("Emergency!");
 	}
 	
 	// special case: we are going directly between forward and reverse
 	// skip over not giving the train much power: about -30 to 30
 	else if((targetSpeed >= 25) && (motorSpeed > -25 && motorSpeed < 25)) {
 		nextSpeed = 25;
-		Serial.println("Switching into forward gear...next speed set to " + (String)(int)nextSpeed);
+		Serial.print("Switching into forward gear.");
 	}
 	else if((targetSpeed <= -25) && (motorSpeed > -25 && motorSpeed < 25)) {
 		nextSpeed = -25;
-		Serial.println("Switching into reverse gear... next speed set to " + (String)(int)nextSpeed);
+		Serial.print("Switching into reverse gear.");
 	}
 	
 	// normal cases
@@ -57,31 +60,37 @@ float Track::setNextSpeed() {
 			nextSpeed = targetSpeed;
 		else nextSpeed = motorSpeed + acceleration;
 		nextDirection = FORWARD;
-		Serial.println("Moving forwards and accelerating... next speed set to " + (String)(int)nextSpeed);
+		Serial.print("Moving forwards and accelerating.");
 	}
 	else if((targetSpeed < motorSpeed) && (motorSpeed > 0)) {
 		if(abs(targetSpeed - motorSpeed) < braking)
 			nextSpeed = targetSpeed;
 		else nextSpeed = motorSpeed - braking;
 		nextDirection = FORWARD;
-		Serial.println("Moving forwards and braking... next speed set to " + (String)(int)nextSpeed);
+		Serial.print("Moving forwards and braking.");
 	}
 	else if((targetSpeed < motorSpeed) && (motorSpeed <= 0)) {
 		if(abs(targetSpeed - motorSpeed) < acceleration)
 			nextSpeed = targetSpeed;
 		else nextSpeed = motorSpeed - acceleration;
 		nextDirection = BACKWARD;
-		Serial.println("Moving backwards and accelerating... next speed set to " + (String)(int)nextSpeed);
+		Serial.print("Moving backwards and accelerating.");
 	}
 	else if((targetSpeed > motorSpeed) && (motorSpeed < 0)) {
 		if(abs(targetSpeed - motorSpeed) < braking)
 			nextSpeed = targetSpeed;
 		else nextSpeed = motorSpeed + braking;
 		nextDirection = BACKWARD;
-		Serial.println("Moving backwards and braking... next speed set to " + (String)(int)nextSpeed);
+		Serial.print("Moving backwards and braking.");
 	}
 	else {
 		// targetSpeed == motorSpeed, all is well
+		printSpeed = false;
+	}
+	
+	if(printSpeed) {
+		dtostrf(nextSpeed, 0, 2, out);
+		Serial.println(" Next speed set to " + (String)out);
 	}
 	
 	return nextSpeed;
@@ -114,11 +123,27 @@ float Track::changeSpeed() {
 }
 
 float Track::setAcceleration(float acceleration) {
-	this->acceleration = acceleration;
+	if(acceleration > 0) {
+		this->acceleration = acceleration;
+		char * out;
+		dtostrf(acceleration, 0, 2, out);
+		Serial.println("Acceleration set to " + (String)out);
+	}
+	else {
+		Serial.println("Error: out of range");
+	}
 	return acceleration;
 }
 
 float Track::setBraking(float braking) {
-	this->braking = braking;
+	if(braking > 0) {
+		this->braking = braking;
+		char * out;
+		dtostrf(braking, 0, 2, out);
+		Serial.println("Braking set to " + (String)out);
+	}
+	else {
+		Serial.println("Error: out of range");
+	}
 	return braking;
 }
