@@ -2,7 +2,7 @@
 #define turnout_h
 
 #include <AFMotor.h>
-#include <WProgram.h>
+#include <Arduino.h>
 #include <stdlib.h>
 
 enum SwitchState {

@@ -1,7 +1,7 @@
 #ifndef track_h
 #define track_h
 
-#include <WProgram.h>
+#include <Arduino.h>
 #include <stdlib.h>
 #include <AFMotor.h>
 
