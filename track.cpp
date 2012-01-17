@@ -1,5 +1,10 @@
 #include "track.h"
 
+// Track (extends AF_DCMotor)
+// A physical block of track on the railroad.
+// We cannot direclty control trains on a DC layout;
+// instead, we control "all trains running on a specific block"
+
 Track::Track(int8_t motorNum, float acceleration, float braking, int speedLimit, int8_t freq) : AF_DCMotor(motorNum, freq) {
 	this->motorNum = motorNum;
 	this->acceleration = acceleration;
@@ -40,7 +45,6 @@ float Track::setNextSpeed() {
 	// emergency braking is on: don't run the engine
 	if(emergency) {
 		nextSpeed = 0;
-		Serial.println("Emergency!");
 	}
 	
 	// special case: we are going directly between forward and reverse
@@ -100,7 +104,7 @@ float Track::setNextSpeed() {
 void Track::emergencyBrake() {
 	emergency = true;
 	nextSpeed = 0;
-	Serial.println("Emergency! E-brake enabling.");
+	Serial.println("Emergency! E-brake enabled.");
 }
 
 void Track::disableEmergency() {
@@ -125,6 +129,8 @@ float Track::changeSpeed() {
 	return motorSpeed;
 }
 
+
+// this is broken. probably because of dtostrf.
 float Track::setAcceleration(float acceleration) {
 	if(acceleration > 0) {
 		this->acceleration = acceleration;
@@ -138,6 +144,7 @@ float Track::setAcceleration(float acceleration) {
 	return acceleration;
 }
 
+// this is also broken. probably for the same reason.
 float Track::setBraking(float braking) {
 	if(braking > 0) {
 		this->braking = braking;

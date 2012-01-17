@@ -7,6 +7,7 @@
 #include <AFMotor.h>
 #include "track.h"
 #include "turnout.h"
+#include "conductor.h"
 
 // raw input from serial, such as "t -120"
 char input[20];
@@ -26,7 +27,7 @@ float value = 0;
 long timer = 0;
 
 // arrays for track and turnouts. we have overloaded the motors.
-Track tracks[4] = {
+Track track[4] = {
 	Track(1,0.6,1),
 	Track(2,0.6,1),
 	Track(3,0.6,1),
@@ -46,6 +47,9 @@ Turnout turnouts[4] = {
 // if you don't set properly, it will not save you D:
 char type[4] = {'p', 't', '0', '0'};
 
+// the Conductor manages these motors for us
+Conductor conductor(track, turnouts, type);
+
 void setup() {
 	Serial.begin(9600);
 	Serial.println("ATC started.");
@@ -61,11 +65,9 @@ void setup() {
 }
 
 void loop() {
-	//Serial.println("ATC running!");
-	if(millis() > timer + 50) {
-		//Serial.print("Current current reading: ");
-		//Serial.println(analogRead(0));
+	if(millis() > timer + 100) {
 		if(Serial.available()) {
+			Serial.println();
 			Serial.print("Available: ");
 			Serial.println((String)Serial.available());
 		
@@ -75,7 +77,7 @@ void loop() {
 				input[i+1] = '\0';
 			}
 			Serial.print("Input was: ");
-			Serial.println((String)input);
+			Serial.print((String)input);
 			
 			// find the command and recipient
 			command = input[0];
@@ -92,39 +94,15 @@ void loop() {
 			// do stuff
 			switch(command) {
 				case 't':
-				if (type[who - 1] == 't') {
-					tracks[who - 1].setThrottle(value);
-				}
-				break;
+				conductor.setThrottle(who, value); break;
 				case 'a':
-				if (type[who - 1] == 't') {
-					tracks[who - 1].setAcceleration(value);
-				}
-				break;
+				conductor.setAcceleration(who, value); break;
 				case 'b':
-				if (type[who - 1] == 't') {
-					tracks[who - 1].setBraking(value);
-				}
-				break;
+				conductor.setBraking(who, value); break;
 				case 'e':
-				for (int i = 0; i < 4; i++) {
-					if (type[i] == 't') {
-						tracks[i].emergencyBrake();
-					}
-				}
-				break;
-				case 'c':
-				for (int i = 0; i < 4; i++) {
-					if (type[who - 1] == 't') {
-						tracks[who - 1].disableEmergency();
-					}
-				}
-				break;
+				conductor.emergencyBrake(); break;
 				case 'p':
-				if (type[who - 1] == 'p') {
-					turnouts[who - 1].throwSwitch();
-				}
-				break;
+				conductor.throwSwitch(who); break;
 				case 's':
 				Serial.print("Current current reading: ");
 				Serial.println(analogRead(0));
@@ -133,12 +111,8 @@ void loop() {
 		}
 		
 		// do more stuff
-		for (int i = 0; i < 4; i++) {
-			if (type[i] == 't') {
-				tracks[i].setNextSpeed();
-				tracks[i].changeSpeed();
-			}
-		}
+		conductor.setNextSpeed(0);
+		conductor.changeSpeed(0);
 	
 	timer = millis();
 	}

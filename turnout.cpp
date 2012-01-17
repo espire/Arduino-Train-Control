@@ -1,5 +1,9 @@
 #include "turnout.h"
 
+// Turnout (extends AF_DCMotor)
+// A turnout on the railroad.
+// We control it via short DC pulses.
+
 Turnout::Turnout(uint8_t motorNum) : AF_DCMotor(motorNum) {
 	this->motorNum = motorNum;
 	state = UNKNOWN;
@@ -11,7 +15,7 @@ Turnout::Turnout(uint8_t motorNum) : AF_DCMotor(motorNum) {
 void Turnout::setStraight() {
 	if(state != STRAIGHT) {
 		run(FORWARD);
-		delay(20);
+		delay(15);
 		run(RELEASE);
 		state = STRAIGHT;
 		
