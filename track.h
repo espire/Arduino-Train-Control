@@ -1,11 +1,7 @@
 #ifndef track_h
 #define track_h
 
-#if defined(ARDUINO) && ARDUINO >= 100
-#include "Arduino.h"
-#else
-#include "WProgram.h"
-#endif
+#include <WProgram.h>
 #include <stdlib.h>
 #include <AFMotor.h>
 
