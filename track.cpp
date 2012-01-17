@@ -22,7 +22,7 @@ int Track::setThrottle(int throttle) {
 		throttle = speedLimit * -1;
 	}
 	else if(throttle < 10 && throttle > -10) {
-		// don't give the train so little power as to idle it
+		// don't give the train so little power as to idle it for a long time
 		throttle = 0;
 	}
 	
@@ -89,9 +89,9 @@ float Track::setNextSpeed() {
 	}
 	
 	if(printSpeed) {
-                dtostrf(nextSpeed, 0, 2, out);
+		dtostrf(nextSpeed, 0, 2, out);
 		Serial.print("Next speed set to ");
-                Serial.println(out);
+		Serial.println(out);
 	}
 	
 	return nextSpeed;

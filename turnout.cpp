@@ -4,7 +4,7 @@ Turnout::Turnout(uint8_t motorNum) : AF_DCMotor(motorNum) {
 	this->motorNum = motorNum;
 	state = UNKNOWN;
 	setSpeed(255);
-	
+
 	Serial.begin(9600);
 }
 
