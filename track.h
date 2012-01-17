@@ -1,13 +1,13 @@
 #ifndef track_h
 #define track_h
 
-#include <Arduino.h>
+#include <WProgram.h>
 #include <stdlib.h>
 #include <AFMotor.h>
 
 class Track : public AF_DCMotor {
 	public:
-		Track(int8_t, float acceleration = 1, float braking = 1, int speedLimit = 120, int8_t freq = MOTOR12_2KHZ);
+		Track(int8_t, float acceleration = 1, float braking = 1, int speedLimit = 120, int8_t freq = MOTOR12_1KHZ);
 		int setThrottle(int); // tell the track how fast we want to go
 		float setNextSpeed(); // tell the track to calculate the next speed increment
 		void emergencyBrake(); // emergency! all stop!

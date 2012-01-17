@@ -2,7 +2,10 @@
 
 Turnout::Turnout(uint8_t motorNum) : AF_DCMotor(motorNum) {
 	this->motorNum = motorNum;
+	state = UNKNOWN;
 	setSpeed(255);
+	
+	Serial.begin(9600);
 }
 
 void Turnout::setStraight() {
@@ -11,6 +14,8 @@ void Turnout::setStraight() {
 		delay(20);
 		run(RELEASE);
 		state = STRAIGHT;
+		
+		Serial.println("Turnout set straight");
 	}
 }
 
@@ -20,6 +25,8 @@ void Turnout::setTurned() {
     	delay(20);
     	run(RELEASE);
     	state = TURNED;
+
+		Serial.println("Turnout set turned");
 	}
 }
 
@@ -32,6 +39,7 @@ SwitchState Turnout::throwSwitch() {
 	}
 	else {
 		state = UNKNOWN;
+		Serial.println("Turnout state uknown, so it was not changed");
 	}
 	
 	return state;

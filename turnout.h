@@ -1,9 +1,9 @@
 #ifndef turnout_h
 #define turnout_h
 
-#include <AFMotor.h>
-#include <Arduino.h>
+#include <WProgram.h>
 #include <stdlib.h>
+#include <AFMotor.h>
 
 enum SwitchState {
 	STRAIGHT,
