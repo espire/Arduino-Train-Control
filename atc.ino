@@ -8,23 +8,17 @@
 #include "track.h"
 #include "turnout.h"
 #include "conductor.h"
-
-// raw input from serial, such as "t -120"
-char input[20];
-
-// the first character from input, used to specify what the command is
-char command = ' ';
-
-// the third character from input, used to specify who recieves the command
-// 1-4 designate a motor; a designates all the motors
-char * whos = "0";
-int who;
-
-// the parameter associated with the command, such as speed
-float value = 0;
+#include "command.h"
+#include "serialcommand.h"
 
 // milliseconds since the last time we acted on input
 long timer = 0;
+
+// Read ATCCs into here
+Command command;
+
+// We will get ATCCs from serial
+SerialCommand serialcommand;
 
 // arrays for track and turnouts. we have overloaded the motors.
 Track track[4] = {
@@ -57,11 +51,7 @@ void setup() {
 	// straighten the turnouts
 	// it's a good idea to make sure they're straight after this.
 	// if they're not, swap its wires.
-	for (int i = 0; i < 4; i++) {
-		if (type[i] == 'p') {
-			turnouts[i].setStraight();
-		}
-	}
+	conductor.setStraight(0);
 }
 
 void loop() {
@@ -70,39 +60,21 @@ void loop() {
 			Serial.println();
 			Serial.print("Available: ");
 			Serial.println((String)Serial.available());
-		
-			// read 19 characters into input
-			for(int i = 0; i < 18 && Serial.available(); i++) {
-				input[i] = Serial.read();
-				input[i+1] = '\0';
-			}
-			Serial.print("Input was: ");
-			Serial.print((String)input);
 			
-			// find the command and recipient
-			command = input[0];
-			whos[0] = input[2];
-			who = atoi(whos);
+			serialcommand.read(command);
 			
-			// shift the input array 4 to the left, leaving only the parameter
-			for(int i = 0; i < 4; i++) {
-				input[i] = input[i+4];
-			}
-			
-			value = atof(input);
-		
 			// do stuff
-			switch(command) {
+			switch(command.action) {
 				case 't':
-				conductor.setThrottle(who, value); break;
+				conductor.setThrottle(command.who, command.value); break;
 				case 'a':
-				conductor.setAcceleration(who, value); break;
+				conductor.setAcceleration(command.who, command.value); break;
 				case 'b':
-				conductor.setBraking(who, value); break;
+				conductor.setBraking(command.who, command.value); break;
 				case 'e':
 				conductor.emergencyBrake(); break;
 				case 'p':
-				conductor.throwSwitch(who); break;
+				conductor.throwSwitch(command.who); break;
 				case 's':
 				Serial.print("Current current reading: ");
 				Serial.println(analogRead(0));

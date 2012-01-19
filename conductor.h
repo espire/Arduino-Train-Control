@@ -32,7 +32,7 @@ private:
 	Track * track;
 	Turnout * turnouts;
 	char * type;
-	int emergency;
+	bool emergency;
 };
 
 #endif

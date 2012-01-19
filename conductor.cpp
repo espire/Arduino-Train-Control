@@ -9,6 +9,7 @@ Conductor::Conductor(Track * track, Turnout * turnouts, char * type) :
 	track(track),
 	turnouts(turnouts),
 	type(type)  {
+		emergency = false;
 }
 
 // tells a track to set its throttle
@@ -16,6 +17,12 @@ Conductor::Conductor(Track * track, Turnout * turnouts, char * type) :
 // returns the number of throttles succesfully set.
 int Conductor::setThrottle(int who, int value) {
 	int set = 0;
+	
+	// if the emergency brake was on, disable it now.
+	if (emergency) {
+		emergencyBrake();
+	}
+	
 	for (int i = 0; i < 4; i++) {
 		if (type[i] == 't' && (who - 1 == i || who == 0)) {
 			track[i].setThrottle(value);
@@ -92,16 +99,16 @@ int Conductor::emergencyBrake() {
 				set++;
 			}
 		}
-		emergency = 0;
+		emergency = false;
 	}
 	else {
 		for (int i = 0; i < 4; i++) {
 			if (type[i] == 't') {
-				track[i].disableEmergency();
+				track[i].emergencyBrake();
 				set++;
 			}
 		}
-		emergency = 1;
+		emergency = true;
 	}
 	return set;
 }

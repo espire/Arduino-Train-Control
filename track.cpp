@@ -26,35 +26,35 @@ int Track::setThrottle(int throttle) {
 	else if(throttle < (speedLimit * -1)) {
 		throttle = speedLimit * -1;
 	}
-	else if(throttle < 10 && throttle > -10) {
+	else if(throttle < 20 && throttle > -20) {
 		// don't give the train so little power as to idle it for a long time
 		throttle = 0;
 	}
 	
 	targetSpeed = throttle;
-	disableEmergency();
 	Serial.println("Throttle set to " + (String)targetSpeed);
 	return throttle;
 }
 
 float Track::setNextSpeed() {
   
-	char out[5];
+	char out[7];
 	bool printSpeed = true;
 	
 	// emergency braking is on: don't run the engine
 	if(emergency) {
+		printSpeed = false;
 		nextSpeed = 0;
 	}
 	
 	// special case: we are going directly between forward and reverse
 	// skip over not giving the train much power: about -20 to 20
-	else if((targetSpeed >= 20) && (motorSpeed > -20 && motorSpeed < 20)) {
-		nextSpeed = 20;
+	else if((targetSpeed >= 15) && (motorSpeed > -15 && motorSpeed < 15)) {
+		nextSpeed = 15;
 		Serial.println("Switching into forward gear.");
 	}
-	else if((targetSpeed <= -20) && (motorSpeed > -20 && motorSpeed < 20)) {
-		nextSpeed = -20;
+	else if((targetSpeed <= -15) && (motorSpeed > -15 && motorSpeed < 15)) {
+		nextSpeed = -15;
 		Serial.println("Switching into reverse gear.");
 	}
 	
@@ -129,14 +129,13 @@ float Track::changeSpeed() {
 	return motorSpeed;
 }
 
-
-// this is broken. probably because of dtostrf.
 float Track::setAcceleration(float acceleration) {
+	char out[7];
 	if(acceleration > 0) {
 		this->acceleration = acceleration;
-		char * out;
 		dtostrf(acceleration, 0, 2, out);
-		Serial.println("Acceleration set to " + (String)out);
+		Serial.print("Acceleration set to ");
+		Serial.println(out);
 	}
 	else {
 		Serial.println("Error: out of range");
@@ -144,13 +143,14 @@ float Track::setAcceleration(float acceleration) {
 	return acceleration;
 }
 
-// this is also broken. probably for the same reason.
 float Track::setBraking(float braking) {
+	char out[7];
 	if(braking > 0) {
 		this->braking = braking;
 		char * out;
 		dtostrf(braking, 0, 2, out);
-		Serial.println("Braking set to " + (String)out);
+		Serial.print("Braking set to ");
+		Serial.println (out);
 	}
 	else {
 		Serial.println("Error: out of range");
