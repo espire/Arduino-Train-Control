@@ -15,11 +15,8 @@ public:
 	void read(Command & command);
 	void write(Command command);
 	
-	// raw input from serial, such as "t 2 -100"
+	// Raw input from serial, such as "t 2 -100"
 	char input[9];
-
-	// a string to parse into who
-	char * whos;
 };
 
 #endif

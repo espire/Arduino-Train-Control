@@ -1,9 +1,11 @@
 #include "turnout.h"
 
-// Turnout (extends AF_DCMotor)
-// A turnout on the railroad.
-// We control it via short DC pulses.
-
+/**
+ * Turnout (extends AF_DCMotor)
+ * A turnout on the railroad.
+ * We control it via short DC pulses.
+ */
+ 
 Turnout::Turnout(uint8_t motorNum) : AF_DCMotor(motorNum) {
 	this->motorNum = motorNum;
 	state = UNKNOWN;
@@ -12,6 +14,7 @@ Turnout::Turnout(uint8_t motorNum) : AF_DCMotor(motorNum) {
 	Serial.begin(9600);
 }
 
+/** Throw the turnout straight. */
 void Turnout::setStraight() {
 	if(state != STRAIGHT) {
 		run(FORWARD);
@@ -23,6 +26,7 @@ void Turnout::setStraight() {
 	}
 }
 
+/** Throw the turnout turned. */
 void Turnout::setTurned() {
 	if(state != TURNED) {
     	run(BACKWARD);
@@ -34,6 +38,10 @@ void Turnout::setTurned() {
 	}
 }
 
+/**
+ * Throw the turnout in the other direction from its current state.
+ * @return the turnout's new state.
+ */
 SwitchState Turnout::throwSwitch() {
 	if(state == TURNED) {
 		setStraight();

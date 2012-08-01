@@ -1,20 +1,22 @@
 #include "conductor.h"
 
-// Conductor
-// The conductor makes it easier to control physical railroad elements.
-// Though it has ~no intelligence, it could be extended to have some.
+/**
+ * Conductor
+ * The conductor makes it easier to control many physical railroad elements.
+ * Though it has no intelligence, it could be extended to have some.
+ */
 
-// The conductor does not create its own layout elements.
 Conductor::Conductor(Track * track, Turnout * turnouts, char * type) :
 	track(track),
 	turnouts(turnouts),
-	type(type)  {
-		emergency = false;
+	type(type) {
+	emergency = false;
 }
 
-// tells a track to set its throttle
-// if who is 0, try every track.
-// returns the number of throttles succesfully set.
+/** 
+ * Tells a track to set its throttle. If who is 0, try to set every track.
+ * @return the number of throttles succesfully set.
+ */
 int Conductor::setThrottle(int who, int value) {
 	int set = 0;
 	
@@ -32,23 +34,25 @@ int Conductor::setThrottle(int who, int value) {
 	return set;
 }
 
-// tells a track to set its throttle
-// if who is 0, try every track.
-// returns the number of speeds successfully set.
-int Conductor::setNextSpeed(int who) {
+/**
+ * Tells a track to set its next speed. If who is 0, try to set every track.
+ * @return the number of speeds successfully set.
+ */
+int Conductor::findNextSpeed(int who) {
 	int set = 0;
 	for (int i = 0; i < 4; i++) {
 		if (type[i] == 't' && (who - 1 == i || who == 0)) {
-			track[i].setNextSpeed();
+			track[i].findNextSpeed();
 			set++;
 		}
 	}	
 	return set;
 }
 
-// change tracks' speeds
-// if who is 0, try every track.
-// returns the number of tracks successfully adjusted.
+/**
+ * Changes a track's speed. If who is 0, tries to change every track's speed.
+ * @return the number of tracks successfully adjusted.
+ */
 int Conductor::changeSpeed(int who) {
 	int set = 0;
 	for (int i = 0; i < 4; i++) {
@@ -74,9 +78,10 @@ int Conductor::setAcceleration(int who, int value) {
 	return set;
 }
 
-// change tracks' braking
-// if who is 0, try every track.
-// returns the number of tracks successfully adjusted.
+/**
+ * Adjust a track's braking coefficient. If who is 0, try to adjust every track.
+ * @return the number of tracks successfully adjusted.
+ */
 int Conductor::setBraking(int who, int value) {
 	int set = 0;
 	for (int i = 0; i < 4; i++) {
@@ -88,15 +93,17 @@ int Conductor::setBraking(int who, int value) {
 	return set;
 }
 
-// toggle the emergency brakes
-// the conductor remembers the state of emergency.
-int Conductor::emergencyBrake() {
-	int set = 0;
+/**
+ * Toggle the emergency brakes for all tracks.
+ * The conductor remembers the state of emergency, and ensures that it either
+ * is or is not an emergency for all track together.
+ * @return whether or not the track is now on emergency brake.
+ */
+bool Conductor::emergencyBrake() {
 	if (emergency) {
 		for (int i = 0; i < 4; i++) {
 			if (type[i] == 't') {
 				track[i].disableEmergency();
-				set++;
 			}
 		}
 		emergency = false;
@@ -105,17 +112,17 @@ int Conductor::emergencyBrake() {
 		for (int i = 0; i < 4; i++) {
 			if (type[i] == 't') {
 				track[i].emergencyBrake();
-				set++;
 			}
 		}
 		emergency = true;
 	}
-	return set;
+	return emergency;
 }
 
-// set a turnout straight
-// if who is 0, try every turnout.
-// returns the number of turnouts successfully straightened.
+/**
+ * Sets a turnout straight. If who is 0, tries to straighten every turnout.
+ * @return the number of turnouts successfully straightened.
+ */
 int Conductor::setStraight(int who) {
 	int set = 0;
 	for (int i = 0; i < 4; i++) {
@@ -127,9 +134,10 @@ int Conductor::setStraight(int who) {
 	return set;
 }
 
-// set a turnout turned
-// if who is 0, try every turnout.
-// returns the number of turnouts successfully turned.
+/**
+ * Set a turnout turned. If who is 0, try to set every turnout.
+ * @return the number of turnouts successfully turned.
+ */
 int Conductor::setTurned(int who) {
 	int set = 0;
 	for (int i = 0; i < 4; i++) {
@@ -142,9 +150,10 @@ int Conductor::setTurned(int who) {
 }
 
 
-// set a turnout straight
-// if who is 0, try every turnout.
-// returns the number of turnouts successfully straightened.
+/**
+ * Throws a turnout. If who is 0, try to throw every turnout.
+ * @return the number of turnouts successfully straightened.
+ */
 int Conductor::throwSwitch(int who) {
 	int set = 0;
 	for (int i = 0; i < 4; i++) {
@@ -156,7 +165,7 @@ int Conductor::throwSwitch(int who) {
 	return set;
 }
 
-// get a turnout's state
+/** Get a turnout's switched state. */
 SwitchState Conductor::getState(int who) {
 	if (type[who - 1] == 'p') {
 		return turnouts[who - 1].getState(); 

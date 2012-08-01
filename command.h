@@ -7,7 +7,7 @@
 #include "WProgram.h"
 #endif
 
-// an Arduiono Train Control Command(tm) (ATCC)
+// An Arduiono Train Control Command(tm) (ATCC).
 
 class Command {
 public:

@@ -13,16 +13,15 @@ class Conductor {
 public:
 	Conductor(Track * tracks, Turnout * turnouts, char * type);
 	
-	// track control
+	// Track control
 	int setThrottle(int who, int value);
-	int setNextSpeed(int who);
-	int emergencyBrake();
-	int disableEmergency();
+	int findNextSpeed(int who);
+	bool emergencyBrake();
 	int changeSpeed(int who);
 	int setAcceleration(int who, int value);
 	int setBraking(int who, int value);
 	
-	// turnout control
+	// Turnout control
 	int setStraight(int who);
 	int setTurned(int who);
 	int throwSwitch(int who);
