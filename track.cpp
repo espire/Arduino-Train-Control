@@ -62,9 +62,10 @@ float Track::findNextSpeed() {
 		if (throttleSpeed >= 5) {
 			nextSpeed = 5;
 			Serial.println("Switching into forward gear.");
-		} else if (throttleSpeed <= -5)
-		nextSpeed = -5;
-		Serial.println("Switching into reverse gear.");
+		} else if (throttleSpeed <= -5) {
+			nextSpeed = -5;
+			Serial.println("Switching into reverse gear.");
+		}
 		
 	} else if ((throttleSpeed > motorSpeed) && (motorSpeed >= 0)) {
 		// We are moving forwards and the target speed is higher;
@@ -186,7 +187,6 @@ float Track::setBraking(float braking) {
 	char out[7];
 	if (braking > 0) {
 		this->braking = braking;
-		char * out;
 		dtostrf(braking, 0, 2, out);
 		Serial.print("Braking set to ");
 		Serial.println (out);
@@ -204,7 +204,6 @@ float Track::setSpeedLimit(float speedLimit) {
 	char out[7];
 	if (speedLimit > 0) {
 		this->speedLimit = speedLimit;
-		char * out;
 		dtostrf(speedLimit, 0, 2, out);
 		Serial.print("Speed limit set to ");
 		Serial.println (out);

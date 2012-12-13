@@ -9,7 +9,11 @@
 #include <stdlib.h>
 #include <AFMotor.h>
 
-enum SwitchState {STRAIGHT, TURNED, UNKNOWN};
+enum SwitchState {
+	STRAIGHT,
+	TURNED,
+	UNKNOWN
+};
 
 class Turnout : public AF_DCMotor {
 public:
